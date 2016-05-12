@@ -1,0 +1,43 @@
+# pub:package -- a publication package definition
+
+namespace pub = "http://publishingxml.com/ns/1.0"
+
+grammar {
+    include "../www.idpf.org_2007_opf/package.rnc"
+
+    start |= pub.package
+
+    pub.package = element pub:package {
+        ## pub:package defines a publication package
+        ## @kind = the kind of package -- epub, etc. (REQUIRED)
+        ## @metadata = href to the metadata block (REQUIRED)
+        ## @path = href to the package (default parent of the package file)
+        ## @basename = the base filename for the package (default path basename)
+        ## @cover = href to the cover image file (or omit)
+        ## @toc = href to the toc (or create from content)
+        ## spineitems = optional list of spine items
+
+        attribute kind { xsd:NCName },		# required
+        attribute metadata { xsd:anyURI },	# required
+        attribute path { xsd:anyURI }?,
+        attribute basename { xsd:anyURI }?,
+        attribute cover { xsd:anyURI }?,
+        attribute toc { xsd:anyURI }?,
+
+        element pub:spineitems {
+            element pub:spineitem {
+                ## @href = href to the spine entry (REQUIRED)
+                ## @title = title text to display
+                ## @linear = "yes"|"no", default "yes"
+                ## @properties = space-separated list of spine item properties
+                ## @landmark = the epub:type of this landmark, for the landmarks nav
+
+                attribute href { xsd:anyURI },  # required
+                attribute title { xsd:normalizedString }?,
+                attribute linear { "yes"|"no" }?,
+                attribute properties { xsd:normalizedString }?,
+                attribute landmark { xsd:NCName }?
+            }*
+        }?
+    }
+}

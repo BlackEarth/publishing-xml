@@ -1,0 +1,113 @@
+
+# html -- a strict subset of the HTML5 grammar
+
+default namespace = "http://www.w3.org/1999/xhtml"
+
+grammar {
+	start |= html
+
+	html = element html {
+		html.head,
+		html.body
+	}
+
+	html.global_attributes = 
+		( html.id_attribute?
+		& html.title_attribute?
+		& html.class_attribute?
+		& html.lang_attribute? 
+		& html.style_attribute?)
+
+	html.id_attribute = 
+		attribute id { xsd:NCName }
+	html.title_attribute = 
+		attribute title { xsd:token }
+	html.class_attribute = 
+		attribute class { xsd:token }
+	html.lang_attribute = 
+		attribute lang { xsd:token }
+	html.src_attribute =
+		attribute src { xsd:anyURI }	# URL pattern
+	html.href_attribute = 
+		attribute href { xsd:anyURI }
+	html.style_attribute = 
+		attribute style { xsd:string }
+
+	html.head = element head {
+		html.title?, 
+		( html.link )*
+	}
+
+	html.link = element link {
+		html.href_attribute,
+		attribute type { xsd:string }?,
+		attribute rel { "alternate" | "archives" | "author" | "bookmark" | "external" | "first" | "help" | "icon" | "last" | "license" | "next" | "nofollow" | "noreferrer" | "pingback" | "prefetch" | "prev" | "search" | "sidebar" | "stylesheet" | "tag" | "up" },
+	}
+
+	html.title = element title { text }
+
+	html.section = element section {
+		html.global_attributes,
+		( html.p
+		| html.table
+		| html.div )*
+	}
+
+	html.body = element body {
+		html.section*
+	}
+
+	html.div = element div {
+			html.global_attributes,
+			( html.table
+			| html.p
+			| html.div )*
+		}
+
+	html.table = element table { html.tr* }
+	html.tr = element tr { html.th*, html.td* }
+	html.td = element td { html.p* }
+	html.th = element th { html.p* }
+
+	html.p = element p {
+		html.global_attributes, 
+		( html.text_content
+		| html.span 
+		| html.hyperlink 
+		| html.anchor )*
+	}
+
+	html.text_content = 
+		( text 
+		| html.br
+		| html.anchor
+		| html.img )*
+
+	html.span = element span {
+		html.global_attributes,
+		html.text_content
+	}
+
+	html.hyperlink = element a {
+		html.global_attributes,
+		html.href_attribute,
+		( text 
+		| html.span
+		| html.anchor )*
+	}
+
+	html.anchor = element a {
+		html.id_attribute,
+		html.class_attribute?
+	}
+
+	html.br = element br {
+		html.global_attributes
+	}
+
+	html.img = element img {
+		html.global_attributes,
+		html.src_attribute
+	}
+
+}

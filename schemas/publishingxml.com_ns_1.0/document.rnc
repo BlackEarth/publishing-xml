@@ -1,0 +1,72 @@
+# pub.document -- an XML content document
+
+namespace pub = "http://publishingxml.com/ns/1.0"
+namespace html = "http://www.w3.org/1999/xhtml"
+
+grammar {
+	include "../www.idpf.org_2007_opf/package.rnc"
+	include "../www.w3.org_1999_xhtml/html.rnc" {
+		# redefine html.div
+		html.div = element html:div {
+			html.global_attributes,
+			( html.table
+			| html.p
+			| html.div 
+			| pub.include )*
+		}
+
+		# redefine html.body
+		html.body = element html:body {
+			( html.section
+			| pub.include )*
+		}
+
+		html.section = element html:section {
+			## id and title are required
+			html.id_attribute,
+			html.title_attribute,
+			html.class_attribute?,
+			html.lang_attribute?,
+			html.style_attribute?,
+
+			( html.p
+			| html.table
+			| html.div
+			| pub.include )*
+		}
+	}
+
+	start |= pub.document
+
+	pub.document = element pub:document {
+		html.head?,
+		html.body
+	}
+
+	pub.include = element pub:include {
+		## src -- the document to include
+		## id -- if given, the id of the part of the document to include
+		html.src_attribute,
+		html.id_attribute?
+	}
+
+	pub.field = element pub:field {
+		html.class_attribute,
+		attribute anchor { xsd:NCName }?,
+		text?
+	}
+
+	pub.tab = element pub:tab {
+		empty
+	}
+
+	## footnote
+	pub.footnote = element pub:footnote {
+
+	}
+
+	## endnote
+	pub.endnote = element pub:endnote {
+
+	}
+}

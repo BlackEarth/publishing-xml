@@ -1,0 +1,256 @@
+
+namespace opf = "http://www.idpf.org/2007/opf"
+namespace dc = "http://purl.org/dc/elements/1.1/"
+
+# OPF Package Schema
+# Based on:
+#   Title: Relax NG Schema for the Open Packaging Format 
+#       (OPF) version 2.0
+#   Version: 2.0
+#   Revision: 20070222
+#   Authors: Peter Sorotokin <psorotok@adobe.com>
+
+start = opf.package-element
+
+opf.id-attribute 
+  = attribute id { xsd:ID }?
+opf.xml-lang-attribute 
+  = attribute xml:lang { text }?
+opf.file-as-attribute 
+  = attribute opf:file-as { text }?
+opf.role-attribute 
+  = attribute opf:role { text }?
+opf.scheme-attribute 
+  = attribute opf:scheme { text }?
+opf.event-attribute 
+  = attribute opf:event { text }?
+
+opf.package-element =
+  element opf:package {
+    attribute version { "2.0" },
+    attribute unique-identifier { xsd:IDREF },
+    opf.id-attribute,
+    opf.package-content
+  }
+
+opf.package-content =
+  opf.metadata-element,
+  opf.manifest-element,
+  opf.spine-element,
+  opf.tours-element?,
+  opf.guide-element?
+
+opf.metadata-element =
+  element opf:metadata {
+    opf.id-attribute, opf.metadata-content
+  }
+
+opf.metadata-content =
+  (opf.dc-metadata-element & opf.x-metadata-element?)
+  | (dc.title-element+
+     & dc.language-element+
+     & dc.identifier-element+
+     & dc.metadata-element*
+     & opf.meta-element*
+     & opf.any-other-element*)
+
+opf.dc-metadata-element =
+  element opf:dc-metadata {
+    opf.id-attribute, opf.dc-metadata-content
+  }
+
+opf.dc-metadata-content =
+  dc.title-element+
+  & dc.language-element+
+  & dc.identifier-element+
+  & dc.metadata-element*
+
+dc.identifier-element =
+  element dc:identifier {
+    attribute id { xsd:ID }?,
+    opf.scheme-attribute,
+    dc.metadata-common-content
+  }
+
+dc.title-element =
+  element dc:title {
+    opf.id-attribute,
+    opf.xml-lang-attribute,
+    dc.metadata-common-content
+  }
+
+dc.language-element =
+  element dc:language {
+    opf.id-attribute, dc.metadata-common-content
+  }
+
+dc.metadata-element =
+  element dc:contributor {
+    opf.id-attribute,
+    opf.xml-lang-attribute,
+    opf.file-as-attribute,
+    opf.role-attribute,
+    dc.metadata-common-content
+  }
+  | element dc:coverage {
+      opf.id-attribute,
+      opf.xml-lang-attribute,
+      dc.metadata-common-content
+    }
+  | element dc:creator {
+      opf.id-attribute,
+      opf.xml-lang-attribute,
+      opf.file-as-attribute,
+      opf.role-attribute,
+      dc.metadata-common-content
+    }
+  | element dc:date {
+      opf.id-attribute,
+      opf.event-attribute,
+      dc.metadata-common-content
+    }
+  | element dc:description {
+      opf.id-attribute,
+      opf.xml-lang-attribute,
+      dc.metadata-common-content
+    }
+  | element dc:format {
+      opf.id-attribute, dc.metadata-common-content
+    }
+  | element dc:publisher {
+      opf.id-attribute,
+      opf.xml-lang-attribute,
+      dc.metadata-common-content
+    }
+  | element dc:relation {
+      opf.id-attribute,
+      opf.xml-lang-attribute,
+      dc.metadata-common-content
+    }
+  | element dc:rights {
+      opf.id-attribute,
+      opf.xml-lang-attribute,
+      dc.metadata-common-content
+    }
+  | element dc:source {
+      opf.id-attribute,
+      opf.xml-lang-attribute,
+      dc.metadata-common-content
+    }
+  | element dc:subject {
+      opf.id-attribute,
+      opf.xml-lang-attribute,
+      dc.metadata-common-content
+    }
+  | element dc:type {
+      opf.id-attribute, dc.metadata-common-content
+    }
+
+dc.metadata-common-content = text
+
+opf.x-metadata-element =
+  element opf:x-metadata {
+    opf.id-attribute, opf.x-metadata-content
+  }
+
+opf.x-metadata-content =
+  opf.meta-element* & opf.any-other-element*
+
+opf.meta-element =
+  element opf:meta {
+    opf.id-attribute,
+    opf.xml-lang-attribute,
+    attribute property { text },
+    attribute refines { text }?,
+    attribute scheme { text }?,
+    opf.meta-content
+  }
+
+opf.meta-content = text
+
+opf.manifest-element =
+  element opf:manifest {
+    opf.id-attribute, opf.manifest-content
+  }
+
+opf.manifest-content = opf.item-element+
+
+opf.item-element =
+  element opf:item {
+    attribute id { xsd:ID },
+    attribute href { xsd:anyURI },
+    attribute media-type { text },
+    attribute fallback { xsd:IDREF }?,
+    attribute fallback-style { xsd:IDREF }?,
+    (attribute required-namespace { text },
+     attribute required-modules { text }?)?,
+    opf.item-content
+  }
+
+opf.item-content = empty
+
+opf.spine-element =
+  element opf:spine {
+    opf.id-attribute,
+    attribute toc { xsd:IDREF },
+    opf.spine-content
+  }
+
+opf.spine-content = opf.itemref-element+
+
+opf.itemref-element =
+  element opf:itemref {
+    opf.id-attribute,
+    attribute idref { xsd:IDREF },
+    attribute linear { "yes" | "no" }?,
+    opf.itemref-content
+  }
+
+opf.itemref-content = empty
+
+opf.tours-element =
+  element opf:tours { opf.id-attribute, opf.tours-content }
+
+opf.tours-content = opf.tour-element+
+
+opf.tour-element =
+  element opf:tour {
+    opf.id-attribute,
+    attribute title { text },
+    opf.tour-content
+  }
+
+opf.tour-content = opf.site-element+
+
+opf.site-element =
+  element opf:site {
+    opf.id-attribute,
+    attribute title { text },
+    attribute href { xsd:anyURI },
+    opf.site-content
+  }
+
+opf.site-content = empty
+
+opf.guide-element =
+  element opf:guide { opf.id-attribute, opf.guide-content }
+
+opf.guide-content = opf.reference-element+
+
+opf.reference-element =
+  element opf:reference {
+    opf.id-attribute,
+    attribute type { text },
+    attribute title { text }?,
+    attribute href { xsd:anyURI },
+    opf.reference-content
+  }
+
+opf.reference-content = empty
+
+opf.any-other-element =
+  element * - (opf:* | dc:*) {
+    (attribute * { text }
+     | text
+     | opf.any-other-element)*
+  }
