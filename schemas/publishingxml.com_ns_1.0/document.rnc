@@ -44,20 +44,30 @@ grammar {
 	}
 
 	pub.include = element pub:include {
-		## src -- the document to include
-		## id -- if given, the id of the part of the document to include
-		html.src_attribute,
-		html.id_attribute?
+		## src -- the document to include; if URL has fragment (#...), that is the block id.
+		html.src_attribute
 	}
 
+	## field
 	pub.field = element pub:field {
-		html.class_attribute,
-		attribute anchor { xsd:NCName }?,
+		html.class_attribute,				# the kind of the field
+		attribute control { xsd:string }?,	# the definition of the field
 		text?
 	}
 
-	pub.tab = element pub:tab {
-		empty
+	## cross-reference
+	pub.cref = element pub:cref {
+
+	}
+
+	## index entry
+	pub.xentry = element pub:xentry {
+
+	}
+
+	## conditional text
+	pub.cond = element pub:cond {
+	
 	}
 
 	## footnote
@@ -67,6 +77,10 @@ grammar {
 
 	## endnote
 	pub.endnote = element pub:endnote {
+
+	}
+
+	pub.comment = element pub:comment {
 
 	}
 }
