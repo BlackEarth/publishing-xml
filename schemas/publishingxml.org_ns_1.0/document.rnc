@@ -1,6 +1,6 @@
 # pub.document -- an XML content document
 
-namespace pub = "http://publishingxml.com/ns/1.0"
+namespace pub = "http://publishingxml.org/ns/1.0"
 namespace html = "http://www.w3.org/1999/xhtml"
 
 grammar {
