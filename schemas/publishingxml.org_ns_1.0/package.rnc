@@ -1,6 +1,6 @@
 # pub:package -- a publication package definition
 
-namespace pub = "http://publishingxml.org/ns/1.0"
+namespace pub = "http://publishingxml.org/ns"
 
 grammar {
     include "../www.idpf.org_2007_opf/package.rnc"

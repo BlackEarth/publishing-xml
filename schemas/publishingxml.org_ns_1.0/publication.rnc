@@ -1,6 +1,6 @@
 # publication -- a publication control file
 
-namespace pub = "http://publishingxml.org/ns/1.0"
+namespace pub = "http://publishingxml.org/ns"
 namespace epub = "http://www.idpf.org/2007/ops"
 
 grammar {
