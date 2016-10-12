@@ -1,4 +1,7 @@
-# publishing-xml
+
+
+# ![publishing-xml](design/pub-Logo-02.png)
+
 Publishing XML provides schemas for professional publishing. 
 
 The purpose is to define an XML flavor that covers all publishing needs while maintaining maximum compatibility with existing systems.
