@@ -6,4 +6,5 @@ The purpose is to define an XML flavor that covers all publishing needs while ma
 
 [Content Documents](docs/Content-Documents.docx) lists the structures in Word, WordPress, InDesign, and HTML5. This helps us think about how to make the conversions between formats, and how to define the "central" format, Publishing XML.
 
-Publishing XML, pubxml, and the **‹pub:** logo are trademarks of Black Earth Group, Inc.
+------------------------------------------------------------
+Publishing XML, pubxml, and the ‹**pub**: logo are trademarks of Black Earth Group, Inc. <http://blackearthgroup.com>
