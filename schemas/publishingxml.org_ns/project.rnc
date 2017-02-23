@@ -26,7 +26,8 @@ grammar {
 		element resource {
 			attribute class { xsd:NMTOKENS },
 			attribute href { xsd:anyURI },
-			attribute kind { xsd:NMTOKENS }?
+			attribute kind { xsd:NMTOKENS }?,
+			attribute include { "true"|"false" }?
 		}*
 	}
 
