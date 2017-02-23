@@ -1,0 +1,3 @@
+
+include "../www.idpf.org_2007_opf/package.rnc"
+start |= opf.metadata-element

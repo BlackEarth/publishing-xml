@@ -1,0 +1,52 @@
+# project -- a project control file
+
+default namespace = "http://publishingxml.org/ns"
+namespace epub = "http://www.idpf.org/2007/ops"
+
+grammar {
+	include "metadata.rnc"
+	start |= project
+
+	## The project file 
+	## includes the project @name, metadata element, resources element, and one or more spine elements. 
+
+	project = element project {
+		attribute name { xsd:NCName },
+		( opf.metadata-element
+		& resources
+		& spine+ )
+	}
+
+	## resources — anything that needs to be included that is not in the spine, such as stylesheets, covers, ...
+	## * @class = the class of the resource, such as "stylesheet" or "cover". [REQUIRED]
+	## * @href = the (relative) location of the resource within the project. [REQUIRED]
+	## * @kind = which kind of resource in this class, such as "print" or "digital" or "epub" or "kindle". Default "digital"
+
+	resources = element resources {
+		element resource {
+			attribute class { xsd:NMTOKENS },
+			attribute href { xsd:anyURI },
+			attribute kind { xsd:NMTOKENS }?
+		}*
+	}
+
+	## spine — ordered sequence of content for inclusion in outputs.
+	## * @kind = the "kind" of spine, such as "print" or "digital". Default "digital"
+	## * spineitem = a single item in this spine. Attributes:
+	## 		* @href = the (relative) location of the content within the project. [REQUIRED]
+	## 		* @title = the title of the section (indicates inclusion in the nav TOC). Default None.
+	## 		* @epub:type = the @epub:type of the spineitem, if any, for nav purposes. Default None.
+	## 		* @linear = opf:itemref @linear. If "no", indicates that the content item is out of the normal "flow". Default "yes".
+	## 		* @properties = opf:itemref @properties, for digital production. Default None.
+
+	spine = element spine {
+		attribute kind { xsd:NMTOKENS }?,
+		element spineitem {
+			attribute href { xsd:anyURI },
+			attribute title { xsd:normalizedString }?,
+			attribute epub:type { xsd:normalizedString }?
+			attribute linear { "yes"|"no" }?,
+			attribute properties { xsd:string }?,
+		}*
+	}
+}
