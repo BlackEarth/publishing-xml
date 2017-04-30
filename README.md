@@ -1,4 +1,4 @@
-# ![publishing-xml](design/pub-Logo-02.png) 
+# ![publishing-xml](design/pub_logotype.png) 
 
 Publishing XML defines a shared set of XML vocabularies (“schemas”) for professional publishing. The purpose is to define an XML flavor that covers all publishing needs while maintaining maximum compatibility with existing systems. It fills a gap in the publishing ecosystem: There has been no comprehensive set of schemas, and corresponding tools, to cover the needs of publishing in general. Publishing XML is to publishing what EPUB3 is to digital publishing. Like EPUB3, it:
 
