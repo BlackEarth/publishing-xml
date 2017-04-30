@@ -20,7 +20,7 @@ grammar {
 	## resources — anything that needs to be included that is not in the spine, such as stylesheets, covers, ...
 	## * @class = the class of the resource, such as "stylesheet" or "cover". [REQUIRED]
 	## * @href = the (relative) location of the resource within the project. [REQUIRED]
-	## * @kind = which kind of resource in this class, such as "print" or "digital" or "epub" or "kindle". Default "digital"
+	## * @kind = which kind of resource in this class, such as "print", "digital", "epub", "kindle". Default "digital"
 
 	resources = element resources {
 		element resource {
