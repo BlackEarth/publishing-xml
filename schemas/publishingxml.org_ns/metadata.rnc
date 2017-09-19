@@ -1,3 +1,20 @@
 
-include "../www.idpf.org_2007_opf/package.rnc"
-start |= opf.metadata-element
+namespace pub = "http://publishingxml.org/ns"
+
+grammar {
+	include "../www.idpf.org_2007_opf/package.rnc"
+	start |= pub.metadata
+
+	## pub:metadata has different requirements than opf:metadata:
+	## * It doesn't require dc:title, dc:language, or dc:identifier elements
+	## * It doesn't allow dc:metadata or dc:x-metadata elements
+
+	pub.metadata = element pub:metadata {
+		(dc.title-element*
+		& dc.language-element*
+		& dc.identifier-element*
+		& dc.metadata-element*
+		& opf.meta-element*
+		& opf.any-other-element*)
+	}
+}

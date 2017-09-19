@@ -1,12 +1,12 @@
 
 # html -- a strict subset of the HTML5 grammar
 
-default namespace = "http://www.w3.org/1999/xhtml"
+namespace html = "http://www.w3.org/1999/xhtml"
 
 grammar {
 	start |= html
 
-	html = element html {
+	html = element html:html {
 		html.head,
 		html.body
 	}
@@ -33,81 +33,104 @@ grammar {
 	html.style_attribute = 
 		attribute style { xsd:string }
 
-	html.head = element head {
+	html.head = element html:head {
 		html.title?, 
 		( html.link )*
 	}
 
-	html.link = element link {
+	html.link = element html:link {
 		html.href_attribute,
 		attribute type { xsd:string }?,
-		attribute rel { "alternate" | "archives" | "author" | "bookmark" | "external" | "first" | "help" | "icon" | "last" | "license" | "next" | "nofollow" | "noreferrer" | "pingback" | "prefetch" | "prev" | "search" | "sidebar" | "stylesheet" | "tag" | "up" },
+		attribute rel { 
+			"alternate" | "archives" | "author" | "bookmark" | "external" 
+			| "first" | "help" | "icon" | "last" | "license" | "next" 
+			| "nofollow" | "noreferrer" | "pingback" | "prefetch" | "prev" 
+			| "search" | "sidebar" | "stylesheet" | "tag" | "up" 
+		}
 	}
 
-	html.title = element title { text }
+	html.title = element html:title { text }
 
-	html.section = element section {
+	html.section = element html:section {
 		html.global_attributes,
-		( html.p
+		( html.paragraph_element
 		| html.table
-		| html.div )*
+		| html.div
+		| html.ul
+		| html.ol )*
 	}
 
-	html.body = element body {
+	html.body = element html:body {
 		html.section*
 	}
 
-	html.div = element div {
-			html.global_attributes,
-			( html.table
-			| html.p
-			| html.div )*
-		}
-
-	html.table = element table { html.tr* }
-	html.tr = element tr { html.th*, html.td* }
-	html.td = element td { html.p* }
-	html.th = element th { html.p* }
-
-	html.p = element p {
-		html.global_attributes, 
-		( html.text_content
-		| html.span 
-		| html.hyperlink 
-		| html.anchor )*
+	html.div = element html:div {
+		html.global_attributes,
+		( html.block_element
+		| html.img )*
 	}
+
+	html.block_element = 
+		( html.section
+		| html.div
+		| html.table
+		| html.ul
+		| html.ol
+		| html.paragraph_element )
+
+	html.paragraph_element = 
+		( element html:p { html.global_attributes, html.text_content* }
+		| element html:h1 { html.global_attributes, html.text_content* }
+		| element html:h2 { html.global_attributes, html.text_content* }
+		| element html:h3 { html.global_attributes, html.text_content* }
+		| element html:h4 { html.global_attributes, html.text_content* }
+		| element html:h5 { html.global_attributes, html.text_content* }
+		| element html:h6 { html.global_attributes, html.text_content* }
+		| element html:h7 { html.global_attributes, html.text_content* }
+		| element html:h8 { html.global_attributes, html.text_content* }
+		| element html:h9 { html.global_attributes, html.text_content* } )
+
+	html.span_element = 
+		( element html:span { html.global_attributes, html.text_content*} )
 
 	html.text_content = 
 		( text 
 		| html.br
 		| html.anchor
-		| html.img )*
+		| html.hyperlink
+		| html.span_element
+		| html.img )
 
-	html.span = element span {
-		html.global_attributes,
-		html.text_content
-	}
-
-	html.hyperlink = element a {
+	html.hyperlink = element html:a {
 		html.global_attributes,
 		html.href_attribute,
-		( text 
-		| html.span
-		| html.anchor )*
+		attribute target { "_blank" }?,
+		html.text_content*
 	}
 
-	html.anchor = element a {
+	html.anchor = element html:a {
 		html.id_attribute,
 		html.class_attribute?
 	}
 
-	html.br = element br {
+	html.br = element html:br {
 		html.global_attributes
 	}
 
-	html.img = element img {
+	html.img = element html:img {
 		html.global_attributes,
-		html.src_attribute
+		html.src_attribute,
+		attribute width { xsd:integer }?,
+		attribute height { xsd:integer }?
 	}
+
+	html.table = element html:table { html.global_attributes, html.tr* }
+	html.tr = element html:tr { html.global_attributes, ( html.th | html.td )* }
+	html.td = element html:td { html.global_attributes, ( html.block_element | html.text_content )* }
+	html.th = element html:th { html.global_attributes, ( html.block_element | html.text_content )* }
+
+	html.ul = element html:ul { html.global_attributes, attribute start { xsd:integer }?, html.li* }
+	html.ol = element html:ol { html.global_attributes, attribute start { xsd:integer }?, html.li* }
+	html.li = element html:li { html.global_attributes, ( html.li | html.block_element | html.text_content )* }
 
 }

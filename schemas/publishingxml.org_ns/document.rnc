@@ -2,85 +2,177 @@
 
 namespace pub = "http://publishingxml.org/ns"
 namespace html = "http://www.w3.org/1999/xhtml"
+namespace epub = "http://www.idpf.org/2007/ops"
 
 grammar {
-	include "../www.idpf.org_2007_opf/package.rnc"
+	include "metadata.rnc"
 	include "../www.w3.org_1999_xhtml/html.rnc" {
-		# redefine html.div
-		html.div = element html:div {
-			html.global_attributes,
-			( html.table
-			| html.p
-			| html.div 
-			| pub.include )*
-		}
 
-		# redefine html.body
+		# add pub.cond to html.global_attributes
+		html.global_attributes = 
+			( html.id_attribute?
+			& html.title_attribute?
+			& html.class_attribute?
+			& html.lang_attribute? 
+			& html.style_attribute?
+			& pub.cond_attribute?
+			& attribute epub:type { xsd:token }? )
+
+		# add pub.include to html.body
 		html.body = element html:body {
 			( html.section
+			| html.table
+			| html.div
+			| html.paragraph_element
 			| pub.include )*
 		}
 
-		html.section = element html:section {
-			## id and title are required
-			html.id_attribute,
-			html.title_attribute,
-			html.class_attribute?,
-			html.lang_attribute?,
-			html.style_attribute?,
+		# add pub.include to html.block_element
+		html.block_element = 
+			( html.section
+			| html.div
+			| html.table
+			| html.ul
+			| html.ol
+			| html.paragraph_element
+			| pub.include )
 
-			( html.p
+		# add pub elements to html.text_content
+		html.text_content = 
+			( text 
+			| html.div
+			| html.br
+			| html.anchor
+			| html.hyperlink
+			| html.span_element
+			| html.img
+			| pub.footnote
+			| pub.footnote-ref
+			| pub.endnote
+			| pub.endnote-ref
+			| pub.include )
+
+		html.section = element html:section {
+			html.global_attributes,
+	        attribute pub:footnote-start { xsd:string }?,
+	        attribute pub:footnote-format { xsd:string }?,
+	        attribute pub:footnote-restart { xsd:string }?,
+	        attribute pub:endnote-start { xsd:string }?,
+	        attribute pub:endnote-format { xsd:string }?,
+	        attribute pub:endnote-restart { xsd:string }?,
+
+			( html.section
 			| html.table
 			| html.div
-			| pub.include )*
+			| html.paragraph_element
+			| pub.include
+			| html.ul
+			| html.ol )*
+		}
+
+		html.table = element html:table { 
+			html.global_attributes,
+			html.tr* 
+		}
+		html.td = element html:td { 
+			html.global_attributes,
+			html.paragraph_element* 
+		}
+		html.th = element html:th { 
+			html.global_attributes,
+			html.paragraph_element* 
 		}
 	}
 
 	start |= pub.document
 
+	any_attribute = attribute * { text }
+	any_element = element * {
+	    ( any_attribute
+		| text
+		| any_element )*
+	}
+
+	pub.cond_attribute = attribute pub:cond { xsd:token }
+
 	pub.document = element pub:document {
-		html.head?,
+		html.src_attribute?,
+		pub.metadata?,
 		html.body
 	}
 
+	## pub:include = A file or external element that is to be included at this point.
+	## @src = [REQ] url of the source document / element to be included
+	## result content is not allowed inside the pub:include element; instead, the content should be resolvable.
+
 	pub.include = element pub:include {
-		## src -- the document to include; if URL has fragment (#...), that is the block id.
-		html.src_attribute
+		html.src_attribute,
+		pub.cond_attribute?
 	}
 
-	## field
+	## pub:field = a field, providing calculated result text.
+	## @class = [REQ] kind of field.
+	## @* = any other attribute is currently allowed.
+	## the text of the field is the result of calculating its value.
+	## (fields cannot yet include other fields)
+
 	pub.field = element pub:field {
-		html.class_attribute,				# the kind of the field
-		attribute control { xsd:string }?,	# the definition of the field
+		html.class_attribute,
+		any_attribute*,
 		text?
 	}
 
-	## cross-reference
-	pub.cref = element pub:cref {
-
-	}
-
-	## index entry
-	pub.xentry = element pub:xentry {
-
-	}
-
-	## conditional text
-	pub.cond = element pub:cond {
-	
-	}
-
-	## footnote
 	pub.footnote = element pub:footnote {
-
+		html.id_attribute,
+		html.title_attribute?,
+		pub.cond_attribute?,
+		( html.table
+		| html.div
+		| html.paragraph_element
+		| pub.include
+		| html.ul
+		| html.ol )*
 	}
 
-	## endnote
+	pub.footnote-ref = element pub:footnote-ref {
+		html.id_attribute,
+		pub.cond_attribute?
+	}
+
 	pub.endnote = element pub:endnote {
-
+		html.id_attribute,
+		html.title_attribute?,
+		pub.cond_attribute?,
+		( html.table
+		| html.div
+		| html.paragraph_element
+		| pub.include
+		| html.ul
+		| html.ol )*
 	}
 
-	pub.comment = element pub:comment {
-
+	pub.endnote-ref = element pub:endnote-ref {
+		html.id_attribute,
+		pub.cond_attribute?
 	}
+
+	pub.tab = element pub:tab {
+		attribute align { "left" | "right" | "center" | "decimal" | "here" }?,
+		pub.cond_attribute?
+	}
+
+#	pub.comment = element pub:comment {
+#
+#	}
+
+#	## cross-reference -- NOT YET SUPPORTED
+#	pub.cref = element pub:cref {
+#	
+#	}
+
+#	## index entry -- NOT YET SUPPORTED
+#	pub.xe = element pub:xe {
+#
+#	}
+
 }
